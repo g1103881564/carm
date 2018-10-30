@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orilore.mappers.ComponentMapper">
+	<resultMap type="Component" id="warningMap">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="warning" property="warning"/>
+		<collection property="stocks" ofType="Stock">
+			<id column="sid" property="id"/>
+			<id column="size" property="size"/>
+			<id column="quantity" property="quantity"/>
+		</collection>
+	</resultMap>
+	
+	<resultMap type="Component" id="componentResultMap">
+		<id column="id" property="id"/>
+		<result column="code" property="code"/>
+		<result column="name" property="name"/>
+		<result column="price" property="price"/>
+		<result column="sale" property="sale"/>
+		<result column="factory" property="factory"/>
+		<result column="status" property="status"/>
+		<result column="term" property="term"/>
+		<result column="cid" property="cid"/>
+		<result column="fid" property="fid"/>
+		<result column="warning" property="warning"/>
+		<result column="info" property="info"/>
+	</resultMap>
+	<resultMap type="Component" id="componentMap" extends="componentResultMap">
+		<association property="cate" javaType="Category">
+			<id column="pcid" property="id"/>
+			<result column="pcname" property="name"/>
+		</association>
+		<association property="fact" javaType="Factory">
+			<id column="pfid" property="id"/>
+			<result column="pfname" property="name"/>
+			<result column="person" property="person"/>
+			<result column="phone" property="phone"/>
+			<result column="addr" property="address"/>
+			<result column="account" property="account"/>
+		</association>
+		<collection property="stocks" ofType="Stock">
+			<id column="sid" property="id"/>
+			<id column="scid" property="cid"/>
+			<id column="size" property="size"/>
+			<id column="sprice" property="price"/>
+			<id column="psale" property="sale"/>
+			<id column="quantity" property="quantity"/>
+		</collection>
+	</resultMap>
+	
+	<select id="selectState" resultType="Stock">
+		select c.name sname,sum(b.quantity) quantity 
+		from category c left join component a on c.id=a.cid left join stock b on a.id=b.cid
+		where c.status=0 and a.status=0 and b.status=0
+		group by c.name having sum(b.quantity)&gt;0
+	</select>
+	
+	<select id="selectWarning" resultMap="warningMap">
+		select a.id,a.name,a.warning,b.id sid,b.size,b.quantity from component a inner join stock b on a.id=b.cid
+		where b.quantity&lt;a.warning and a.status=0 and b.status=0 order by b.quantity
+	</select>
+	
+	<select id="selectMoney" resultType="Money" parameterType="Money">
+		select c.name cname,a.name name,sum(quantity) quantity,sum(b.quantity*b.price) price 
+		from category c left join component a on a.cid=c.id 
+		left join stock b on a.id=b.cid 
+		where a.status=0 and c.status=0
+		<if test="cname!=null"> and c.name=#{cname} </if> 
+		group by a.name having sum(b.quantity)&gt;0
+		order by c.name,price
+	</select>
+	
+	<select id="selectOne" parameterType="int" resultMap="componentMap">
+		select 
+		a.id,a.code,a.name,a.price,a.sale, a.factory, 
+		a.status,a.term,a.cid,a.info,a.fid, a.warning, 
+		b.id pcid,b.name pcname,c.id pfid, 
+		c.name pfname,c.phone,c.address addr,c.account,c.person, 
+		s.id sid,s.size, s.cid scid,s.price sprice,s.sale psale,s.quantity 
+		from component a left join category b on a.cid=b.id left join 
+		factory c on a.fid=c.id left join stock s on a.id=s.cid where 
+		a.status=0 and a.id=#{0}
+	</select>
+	
+	<select id="select" resultMap="componentResultMap">
+		select * from component where status=0 order by id desc limit #{0},#{1}
+	</select>
+	
+	<select id="getSimple" resultType="Component">
+		select id,code,name,price from component where status=0 order by name
+	</select>
+	
+	<select id="count" parameterType="Comp" resultType="int">
+		select count(*) from component where status=0 
+		<if test="cid!=null and cid&gt;0"> and cid=#{cid} </if>
+		<if test="name!=null and name!=''"> and name like concat('%',#{name},'%') </if>
+		<if test="sale!=null and sale2!=null"> and sale between #{sale} and #{sale2} </if>
+	</select>
+	
+	<select id="query" parameterType="Comp" resultMap="componentResultMap">
+		select * from component where status=0 
+		<if test="cid!=null and cid &gt; 0"> and cid=#{cid} </if>
+		<if test="name!=null and name!=''"> and name like concat('%',#{name},'%')</if>
+		<if test="sale!=null and sale2!=null"> and sale between #{sale} and #{sale2} </if>
+		order by id desc
+		limit #{page},#{count}
+	</select>
+	
+	<insert id="insert" parameterType="Component" useGeneratedKeys="true" keyProperty="id">
+		insert into component(code,name,price,sale,factory,term,cid,info,fid,warning) values(#{code},#{name},#{price},#{sale},#{factory},#{term},#{cid},#{info},#{fid},#{warning})
+	</insert>
+	<delete id="delete" parameterType="int">
+		update component set status=1 where id=#{id}
+	</delete>
+	<update id="update" parameterType="Component">
+		update component set code=#{code},name=#{name},price=#{price},sale=#{sale},factory=#{factory},term=#{term},cid=#{cid},info=#{info},fid=#{fid},warning=#{warning} where id=#{id}
+	</update>
+</mapper>

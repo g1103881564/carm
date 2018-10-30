@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orilore.mappers.DetailMapper">
+	<resultMap type="Detail" id="detailResultMap">
+		<id column="id" property="id"/>
+		<result column="cid" property="cid"/>
+		<result column="rid" property="rid"/>
+		<result column="size" property="size"/>
+		<result column="quantity" property="quantity"/>
+		<result column="price" property="price"/>
+		<result column="sale" property="sale"/>
+		<result column="status" property="status"/>
+	</resultMap>
+	<select id="selectOne" resultType="Detail">
+		select * from detail where cid=#{0} and rid=#{1} and size=#{2}
+	</select>
+	<select id="select" resultMap="detailResultMap">
+		select * from detail where status=0
+	</select>
+	<insert id="insert" parameterType="Detail">
+		insert into detail(cid,rid,size,price,sale,quantity) values(#{cid},#{rid},#{size},#{price},#{sale},#{quantity})
+	</insert>
+	<delete id="delete">
+		delete from detail where cid=#{0} and rid=#{1} and size=#{2}
+	</delete>
+	<update id="update" parameterType="Detail">
+		update detail set cid=#{cid},rid=#{rid},quantity=#{quantity},price=#{price},sale=#{sale},size=#{size} where cid=#{0} and rid=#{1} and size=#{2}
+	</update>
+</mapper>

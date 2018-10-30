@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orilore.mappers.CustomMapper">
+	<resultMap type="Custom" id="customResultMap">
+		<id column="id" property="id"/>
+		<result column="phone" property="phone"/>
+		<result column="name" property="name"/>
+		<result column="sex" property="sex"/>
+		<result column="hiredate" property="hiredate"/>
+		<result column="status" property="status"/>
+		<result column="info" property="info"/>
+	</resultMap>
+	<resultMap type="Custom" id="customMap" extends="customResultMap">
+		<collection property="cars" ofType="Car">
+			<id column="cid" property="id"/>
+			<result column="bid" property="bid"/>
+			<result column="sid" property="sid"/>
+			<result column="code" property="code"/>
+			<result column="color" property="color"/>
+			<result column="pid" property="pid"/>
+			<result column="cinfo" property="info"/>
+			<result column="year" property="year"/>
+			<result column="no" property="no"/>
+			<result column="km" property="km"/>
+			<result column="cstatus" property="status"/>
+		</collection>
+	</resultMap>
+	<select id="selectOne" parameterType="int" resultMap="customMap">
+		select 
+		a.id,a.name,a.phone,a.sex,a.hiredate,a.status,a.info,
+		b.id cid,b.bid,b.sid,b.km,b.code,b.color,b.pid,b.year,b.info cinfo,b.no,b.status cstatus
+		from custom a left join car b
+		on a.id=b.pid where a.id=#{0}
+	</select>
+	<select id="selectByPhone" parameterType="string" resultMap="customMap">
+		select 
+		a.id,a.name,a.phone,a.sex,a.hiredate,a.status,a.info,
+		b.id cid,b.bid,b.sid,b.km,b.code,b.color,b.pid,b.year,b.no,b.hiredate,b.info cinfo,b.status cstatus
+		from custom a left join car b
+		on a.id=b.pid where a.phone=#{0} and a.status=0 limit 0,1
+	</select>
+	<select id="getNonames" resultType="String">
+		select concat(phone,'[',name,']') from custom where status=0
+	</select>
+	<select id="count" parameterType="Custom" resultType="int">
+		select count(*) from custom where status=0 
+		<if test="name!=null"> and name like concat('%',#{name},'%') </if>
+		<if test="phone!=null"> and phone=#{name} </if>
+		<if test="sex!=null"> and sex=#{sex} </if>
+	</select>
+	<select id="select" parameterType="Custom" resultMap="customResultMap">
+		select * from custom where status=0 
+		<if test="name!=null"> and name like concat('%',#{name},'%') </if>
+		<if test="phone!=null"> and phone=#{name} </if>
+		<if test="sex!=null"> and sex=#{sex} </if>
+		limit #{page},#{count}
+	</select>
+	<insert id="insert" parameterType="Custom" useGeneratedKeys="true" keyProperty="id">
+		insert into custom(phone,name,sex,info) values(#{phone},#{name},#{sex},#{info})
+	</insert>
+	<delete id="delete" parameterType="int">
+		update custom set status=1 where id=#{id}
+	</delete>
+	<update id="update" parameterType="Custom">
+		update custom set phone=#{phone},name=#{name},sex=#{sex},info=#{info} where id=#{id}
+	</update>
+</mapper>

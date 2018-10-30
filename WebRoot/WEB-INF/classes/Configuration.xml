@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias alias="Admin" type="com.orilore.model.Admin"/>
+		<typeAlias alias="Brand" type="com.orilore.model.Brand"/>
+		<typeAlias alias="Car" type="com.orilore.model.Car"/>
+		<typeAlias alias="Category" type="com.orilore.model.Category"/>
+		<typeAlias alias="Component" type="com.orilore.model.Component"/>
+		<typeAlias alias="Comp" type="com.orilore.model.Comp"/>
+		<typeAlias alias="Custom" type="com.orilore.model.Custom"/>
+		<typeAlias alias="Detail" type="com.orilore.model.Detail"/>
+		<typeAlias alias="Record" type="com.orilore.model.Record"/>
+		<typeAlias alias="Size" type="com.orilore.model.Size"/>
+		<typeAlias alias="Stock" type="com.orilore.model.Stock"/>
+		<typeAlias alias="Factory" type="com.orilore.model.Factory"/>
+		<typeAlias alias="Emp" type="com.orilore.model.Emp"/>
+		<typeAlias alias="Log" type="com.orilore.model.Log"/>
+		<typeAlias alias="Money" type="com.orilore.model.Money"/>
+		<typeAlias alias="Instock" type="com.orilore.model.Instock"/>
+	</typeAliases>
+	<mappers>
+		<mapper resource="com/orilore/model/Admin.xml"/>
+		<mapper resource="com/orilore/model/Brand.xml"/>
+		<mapper resource="com/orilore/model/Car.xml"/>
+		<mapper resource="com/orilore/model/Category.xml"/>
+		<mapper resource="com/orilore/model/Component.xml"/>
+		<mapper resource="com/orilore/model/Custom.xml"/>
+		<mapper resource="com/orilore/model/Detail.xml"/>
+		<mapper resource="com/orilore/model/Emp.xml"/>
+		<mapper resource="com/orilore/model/Record.xml"/>
+		<mapper resource="com/orilore/model/Size.xml"/>
+		<mapper resource="com/orilore/model/Stock.xml"/>
+		<mapper resource="com/orilore/model/Factory.xml"/>
+		<mapper resource="com/orilore/model/Log.xml"/>
+		<mapper resource="com/orilore/model/Instock.xml"/>
+	</mappers>
+</configuration>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orilore.mappers.RecordMapper">
+	<resultMap type="Record" id="recordResultMap">
+		<id column="id" property="id"/>
+		<result column="cid" property="cid"/>
+		<result column="ymoney" property="ymoney"/>
+		<result column="smoney" property="smoney"/>
+		<result column="hmoney" property="hmoney"/>
+		<result column="money" property="money"/>
+		<result column="pay" property="pay"/>
+		<result column="mdate" property="mdate"/>
+		<result column="info" property="info"/>
+		<result column="emp" property="emp"/>
+		<result column="cname" property="cname"/>
+		<result column="ename" property="ename"/>
+		<result column="no" property="no"/>
+		<result column="status" property="status"/>
+	</resultMap>
+	<resultMap type="Record" id="recordMap" extends="recordResultMap">
+		<collection property="details" ofType="Detail">
+			<result column="pid" property="cid"/>
+			<result column="pname" property="pname"/>
+			<result column="rid" property="rid"/>
+			<result column="size" property="size"/>
+			<result column="quantity" property="quantity"/>
+			<result column="price" property="price"/>
+			<result column="sale" property="sale"/>
+		</collection>
+	</resultMap>
+	
+	<select id="selectCurrentMonth" resultType="Record">
+		select date_format(mdate,'%d') mdate,sum(smoney) smoney,sum(money) money
+		from record where status!=2 and mdate between
+		concat(date_format(now(),'%Y-%m-'),'01') and LAST_DAY(now())
+		group by date_format(mdate,'%d')
+	</select>
+	
+	<select id="selectByMonth" resultType="Record">
+		select date_format(mdate,'%Y-%m-%d') mdate,sum(smoney) smoney,sum(money) money
+		from record where status!=2 and mdate between #{0} and last_day(str_to_date(#{1},'%Y-%m-%d'))
+		group by date_format(mdate,'%Y-%m-%d')
+	</select>
+	
+	<select id="selectByYear" parameterType="string" resultType="Record">
+		select concat(#{0},'年1月') mdate,sum(smoney) smoney,sum(money) money
+		from record where status!=2 and mdate between
+		concat(#{0},'-01-01') and LAST_DAY(str_to_date(concat(#{0},'-01-01'),'%Y-%m-%d'))
+		group by concat(#{0},'年1月')
+		union
+		select concat(#{0},'年2月') mdate,sum(smoney) smoney,sum(money) money
+		from record where status!=2 and mdate between
+		concat(#{0},'-02-01') and LAST_DAY(str_to_date(concat(#{0},'-02-01'),'%Y-%m-%d'))
+		group by concat(#{0},'年2月')
+		union
+		select concat(#{0},'年3月') mdate,sum(smoney) smoney,sum(money) money
+		from record where status!=2 and mdate between
+		concat(#{0},'-03-01') and LAST_DAY(str_to_date(concat(#{0},'-03-01'),'%Y-%m-%d'))
+		group by concat(#{0},'年3月')
+		union
+		select concat(#{0},'年4月') mdate,sum(smoney) smoney,sum(money) money
+		from record where status!=2 and mdate between
+		concat(#{0},'-04-01') and LAST_DAY(str_to_date(concat(#{0},'-04-01'),'%Y-%m-%d'))
+		group by concat(#{0},'年4月')
+		union
+		select concat(#{0},'年5月') mdate,sum(smoney) smoney,sum(money) money
+		from record where status!=2 and mdate between
+		concat(#{0},'-05-01') and LAST_DAY(str_to_date(concat(#{0},'-05-01'),'%Y-%m-%d'))
+		group by concat(#{0},'年5月')
+		union
+		select concat(#{0},'年6月') mdate,sum(smoney) smoney,sum(money) money
+		from record where status!=2 and mdate between
+		concat(#{0},'-06-01') and LAST_DAY(str_to_date(concat(#{0},'-06-01'),'%Y-%m-%d'))
+		group by concat(#{0},'年6月')
+		union
+		select concat(#{0},'年7月') mdate,sum(smoney) smoney,sum(money) money
+		from record where status!=2 and mdate between
+		concat(#{0},'-07-01') and LAST_DAY(str_to_date(concat(#{0},'-07-01'),'%Y-%m-%d'))
+		group by concat(#{0},'年7月')
+		union
+		select concat(#{0},'年8月') mdate,sum(smoney) smoney,sum(money) money
+		from record where status!=2 and mdate between
+		concat(#{0},'-08-01') and LAST_DAY(str_to_date(concat(#{0},'-08-01'),'%Y-%m-%d'))
+		group by concat(#{0},'年8月')
+		union
+		select concat(#{0},'年9月') mdate,sum(smoney) smoney,sum(money) money
+		from record where status!=2 and mdate between
+		concat(#{0},'-09-01') and LAST_DAY(str_to_date(concat(#{0},'-09-01'),'%Y-%m-%d'))
+		group by concat(#{0},'年9月')
+		union
+		select concat(#{0},'年10月') mdate,sum(smoney) smoney,sum(money) money
+		from record where status!=2 and mdate between
+		concat(#{0},'-10-01') and LAST_DAY(str_to_date(concat(#{0},'-10-01'),'%Y-%m-%d'))
+		group by concat(#{0},'年10月')
+		union
+		select concat(#{0},'年11月') mdate,sum(smoney) smoney,sum(money) money
+		from record where status!=2 and mdate between
+		concat(#{0},'-11-01') and LAST_DAY(str_to_date(concat(#{0},'-11-01'),'%Y-%m-%d'))
+		group by concat(#{0},'年11月')
+		union
+		select concat(#{0},'年12月') mdate,sum(smoney) smoney,sum(money) money
+		from record where status!=2 and mdate between
+		concat(#{0},'-12-01') and LAST_DAY(str_to_date(concat(#{0},'-12-01'),'%Y-%m-%d'))
+		group by concat(#{0},'年12月')
+	</select>
+	
+	<select id="selectOne" parameterType="int" resultMap="recordMap">
+		select a.id,a.cid,a.hmoney,a.ymoney,a.smoney,a.money,a.mdate,a.pay,
+		a.info,a.emp,a.status,b.name ename,c.no,d.cid pid,d.rid,d.size,
+		d.price,d.sale,d.quantity,e.name pname from record a 
+		left join emp b on a.emp=b.id 
+		left join car c on a.cid=c.id 
+		left join detail d on a.id=d.rid 
+		left join component e on d.cid=e.id  
+		where a.status!=2 and a.id=#{id}
+	</select>
+	
+	<select id="count" resultType="int" parameterType="Record">
+		select count(*) from record a left join emp b on a.emp=b.id 
+		left join car c on a.cid=c.id left join custom d on d.id=c.pid where a.status!=2
+		<if test="no!=null and no!=''"> and c.no=#{no} </if>
+		<if test="emp!=null and emp!=''"> and a.emp=#{emp} </if>
+		<if test="cname!=null and cname!=''"> and d.phone=#{cname} </if>
+		<if test="status!=null"> and a.status=#{status} </if>
+		<if test="cid gt 0"> and a.cid=#{cid} </if>
+		<if test="mdate!=null and mdate!=''"> and a.mdate between #{mdate} and #{mdate1} </if>
+		<if test="smoney!=null"> and a.smoney between #{smoney} and #{smoney1} </if> 
+		<if test="code!=null and code!=''"> and c.code=#{code}</if>
+	</select>
+	
+	<select id="select" resultMap="recordResultMap" parameterType="Record">
+		select a.*,b.name ename,c.no,d.name cname from record a left join emp b on a.emp=b.id 
+		left join car c on a.cid=c.id left join custom d on d.id=c.pid  
+		where a.status!=2
+		<if test="no!=null and no!=''"> and c.no=#{no} </if>
+		<if test="emp!=null and emp!=''"> and a.emp=#{emp} </if>
+		<if test="cname!=null and cname!=''"> and d.phone=#{cname} </if>
+		<if test="status!=null"> and a.status=#{status} </if>
+		<if test="cid gt 0"> and a.cid=#{cid} </if>
+		<if test="mdate!=null and mdate!=''"> and a.mdate between #{mdate} and #{mdate1} </if>
+		<if test="smoney!=null"> and a.smoney between #{smoney} and #{smoney1} </if> 
+		<if test="code!=null and code!=''"> and c.code=#{code}</if>
+		limit #{page},#{count}
+	</select>
+	<insert id="insert" parameterType="Record" useGeneratedKeys="true" keyProperty="id">
+		insert into record(cid,ymoney,smoney,hmoney,money,pay,mdate,info,emp,status) values(#{cid},#{ymoney},#{smoney},#{hmoney},#{money},#{pay},#{mdate},#{info},#{emp},#{status})
+	</insert>
+	<delete id="delete" parameterType="int">
+		update record set status=2 where id=#{id}
+	</delete>
+	<update id="update" parameterType="Record">
+		update record set cid=#{cid},hmoney=#{hmoney},ymoney=#{ymoney},smoney=#{smoney},money=#{money},pay=#{pay},mdate=#{mdate},info=#{info},emp=#{emp},status=#{status} where id=#{id}
+	</update>
+</mapper>

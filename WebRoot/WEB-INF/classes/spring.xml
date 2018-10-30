@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns:context="http://www.springframework.org/schema/context"
+xmlns:util="http://www.springframework.org/schema/util"
+xmlns:aop="http://www.springframework.org/schema/aop"
+xmlns:tx="http://www.springframework.org/schema/tx"
+xmlns:mvc="http://www.springframework.org/schema/mvc"
+xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+	<mvc:annotation-driven/>
+	<!-- 注入数据源 -->
+	<bean id="ds" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+		<property name="url" value="jdbc:mysql://127.0.0.1:3306/carms" />
+		<property name="username" value="root"/>
+		<property name="password" value="orilore"/>		
+	</bean>
+	<!-- 注入事物管理器 -->
+	<bean id="tx" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="ds"/>
+	</bean>
+	<!-- 注入mybatis SqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:Configuration.xml"/>
+		<property name="dataSource" ref="ds"/>
+	</bean>
+	<!-- 扫描加载 mapper接口及实现 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.orilore.mappers"/>
+	</bean>
+	<!-- 开启Spring注解支持 -->
+	<context:annotation-config/>
+	<!-- 通过组件扫描器扫描所有业务实现类,完成自动注入 -->
+	<context:component-scan base-package="com.orilore.bizs"/>
+	<!-- 通过组件扫描器扫描所有控制器类,完成自动注入 -->
+	<context:component-scan base-package="com.orilore.controller"/>
+	<!-- 开启注解事物支持 -->
+	<tx:annotation-driven transaction-manager="tx"/>
+	<!-- 定义事物管理通知 -->
+	<tx:advice id="advice" transaction-manager="tx">
+		<tx:attributes>
+			<tx:method name="add*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+			<tx:method name="remove*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+			<tx:method name="modify*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+			<tx:method name="get*" propagation="SUPPORTS" read-only="true" rollback-for="java.lang.Exception"/>
+			<tx:method name="find*" propagation="SUPPORTS" read-only="true" rollback-for="java.lang.Exception"/>
+		</tx:attributes>
+	</tx:advice>
+	<!-- 切入点与通知进行整合 -->
+	<aop:config>
+		<aop:pointcut expression="execution(public * com.orilore.bizs.*.*(..))" id="txpt"/>
+		<aop:advisor advice-ref="advice" pointcut-ref="txpt"/>
+	</aop:config>
+	<mvc:resources location="/resources/" mapping="/resources/**"/>
+</beans>

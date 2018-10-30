@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orilore.mappers.SizeMapper">
+	<resultMap type="Size" id="sizeResultMap">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="bid" property="bid"/>
+		<result column="status" property="status"/>
+	</resultMap>
+	<select id="selectOne" parameterType="int" resultType="Size">
+		select * from size where id=#{id}
+	</select>
+	<select id="count" parameterType="int" resultType="int">
+		select count(*) from size where status=0 and bid=#{0}
+	</select>
+	<select id="select" resultMap="sizeResultMap">
+		select * from size where status=0 and bid=#{0}
+		order by id desc limit #{1},#{2}
+	</select>
+	<insert id="insert" parameterType="Size">
+		insert into size(name,bid) values(#{name},#{bid})
+	</insert>
+	<delete id="delete" parameterType="int">
+		update size set status=1 where id=#{id}
+	</delete>
+	<update id="update" parameterType="Size">
+		update size set name=#{name},bid=#{bid} where id=#{id}
+	</update>
+</mapper>

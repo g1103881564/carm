@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orilore.mappers.EmpMapper">
+	<resultMap type="Emp" id="empResultMap">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="sex" property="sex"/>
+		<result column="no" property="no"/>
+		<result column="phone" property="phone"/>
+		<result column="hiredate" property="hiredate"/>
+		<result column="addr" property="addr"/>
+		<result column="status" property="status"/>
+	</resultMap>
+	<select id="selectOne" parameterType="int" resultType="Emp">
+		select * from emp where id=#{id}
+	</select>
+	<select id="count" resultType="int">
+		select count(*) from emp where status=0
+	</select>
+	<select id="select" resultMap="empResultMap">
+		select * from emp where status=0 order by id desc limit #{0},#{1} 
+	</select>
+	<insert id="insert" parameterType="Emp">
+		insert into emp(name,sex,phone,hiredate,no,addr) values(#{name},#{sex},#{phone},#{hiredate},#{no},#{addr})
+	</insert>
+	<delete id="delete" parameterType="int">
+		update emp set status=1 where id=#{id}
+	</delete>
+	<update id="update" parameterType="Emp">
+		update emp set name=#{name},sex=#{sex},hiredate=#{hiredate},phone=#{phone},addr=#{addr},no=#{no} where id=#{id}
+	</update>
+</mapper>

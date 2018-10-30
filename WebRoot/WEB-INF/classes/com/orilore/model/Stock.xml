@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orilore.mappers.StockMapper">
+	<resultMap type="Stock" id="stockResultMap">
+		<id column="id" property="id"/>
+		<result column="cid" property="cid"/>
+		<result column="quantity" property="quantity"/>
+		<result column="status" property="status"/>
+		<result column="price" property="price"/>
+		<result column="sale" property="sale"/>
+	</resultMap>
+	<select id="selectOne" parameterType="int" resultType="Stock">
+		select * from stock where id=#{id}
+	</select>
+	<select id="select" resultMap="stockResultMap">
+		select * from stock where cid=#{0}
+	</select>
+	<insert id="insert" parameterType="Stock">
+		insert into stock(cid,quantity,price,sale,size) values(#{cid},#{quantity},#{price},#{sale},#{size})
+	</insert>
+	<delete id="delete" parameterType="int">
+		delete from stock where cid=#{cid}
+	</delete>
+	<update id="update" parameterType="Stock">
+		update stock set cid=#{cid},quantity=#{quantity},price=#{price},sale=#{sale} where id=#{id}
+	</update>
+</mapper>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orilore.mappers.CarMapper">
+	<resultMap type="Car" id="carResultMap">
+		<id column="id" property="id"/>
+		<result column="bid" property="bid"/>
+		<result column="sid" property="sid"/>
+		<result column="no" property="no"/>
+		<result column="code" property="code"/>
+		<result column="color" property="color"/>
+		<result column="pid" property="pid"/>
+		<result column="info" property="info"/>
+		<result column="status" property="status"/>
+		<result column="hiredate" property="hiredate"/>
+		<result column="year" property="year"/>
+		<result column="km" property="km"/>
+	</resultMap>
+	<resultMap type="Car" id="carRecordMap" extends="carResultMap">
+		<collection property="records" ofType="Record">
+			<id column="rid" property="id"/>
+			<id column="rcid" property="cid"/>
+			<id column="ymoney" property="ymoney"/>
+			<id column="smoney" property="smoney"/>
+			<id column="pay" property="pay"/>
+			<id column="emp" property="emp"/>
+			<id column="rstatus" property="status"/>
+			<id column="mdate" property="mdate"/>
+			<id column="rinfo" property="info"/>
+		</collection>
+	</resultMap>
+	<resultMap type="Car" id="carMap" extends="carResultMap">
+		<association property="custom" javaType="Custom">
+			<id column="cuid" property="id"/>
+			<result column="phone" property="phone"/>
+			<result column="cuname" property="name"/>
+			<result column="sex" property="sex"/>
+			<result column="cudate" property="hiredate"/>
+			<result column="cuinfo" property="info"/>
+		</association>
+		<association property="brand" javaType="Brand">
+			<id column="brid" property="id"/>
+			<result column="brname" property="name"/>
+		</association>
+		<association property="size" javaType="Size">
+			<id column="szid" property="id"/>
+			<result column="szname" property="name"/>
+		</association>
+	</resultMap>
+	<select id="selectOne" parameterType="int" resultMap="carRecordMap">
+		select a.*,b.id rid,b.cid rcid,b.ymoney,b.smoney,b.mdate,b.info rinfo,b.emp,b.status rstatus from car a left join record b on a.id=b.cid
+		where a.status=0 and a.id=#{id}
+	</select>
+	<select id="getCarByNo" parameterType="string" resultMap="carRecordMap">
+		select * from car where status=0 and no=#{no} limit 0,1
+	</select>
+	<select id="getCarByCode" parameterType="string" resultMap="carRecordMap">
+		select * from car where status=0 and code=#{code} limit 0,1
+	</select>
+	<select id="getNos" resultType="String">
+		select concat(no,'-',code) from car where status=0
+	</select>
+	<select id="count" resultType="int" parameterType="map">
+		select count(*)  from car a 
+		left join brand b on a.bid=b.id
+		left join size c on a.sid=c.id 
+		left join custom cu on a.pid=cu.id
+		where a.status=0 
+		<if test="no!=null and no!=''"> and a.no like concat('%',#{no},'%') </if>
+		<if test="phone!=null and phone!=''"> and cu.phone=#{phone} </if>
+		<if test="custom!=null and custom!=''"> and cu.id=#{custom} </if>
+		<if test="code!=null and code!=''"> and a.code=#{code} </if>
+	</select>
+	<select id="select" resultMap="carMap" parameterType="map">
+		select cu.id cuid,cu.phone,cu.name cuname,
+		cu.hiredate cudate,cu.info cuinfo,cu.sex,
+		a.id,a.bid,a.sid,a.code,a.color,a.pid,
+		a.status,a.year,a.km,a.info,a.hiredate,a.no,
+		b.id brid,b.name brname,
+		c.id szid,c.name szname 
+		from car a left join brand b on a.bid=b.id
+		left join size c on a.sid=c.id 
+		left join custom cu on a.pid=cu.id
+		where a.status=0 
+		<if test="no!=null and no!=''"> and a.no like concat('%',#{no},'%') </if>
+		<if test="phone!=null and phone!=''"> and cu.phone=#{phone} </if>
+		<if test="custom!=null and custom!=''"> and cu.id=#{custom} </if>
+		<if test="code!=null and code!=''"> and a.code=#{code} </if>
+		limit #{page},#{count}
+	</select>
+	<insert id="insert" parameterType="Car" useGeneratedKeys="true" keyProperty="id">
+		insert into car(sid,code,color,pid,info,year,km,no,bid) values(#{sid},#{code},#{color},#{pid},#{info},#{year},#{km},#{no},#{bid})
+	</insert>
+	<delete id="delete" parameterType="int">
+		update car set status=1 where id=#{id}
+	</delete>
+	<update id="update" parameterType="Car">
+		update car set sid=#{sid},code=#{code},color=#{color},pid=#{pid},info=#{info},km=#{km},year=#{year},bid=#{bid},no=#{no} where id=#{id}
+	</update>
+</mapper>

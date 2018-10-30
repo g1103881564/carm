@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orilore.mappers.CategoryMapper">
+	<resultMap type="Category" id="categoryResultMap">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="status" property="status"/>
+	</resultMap>
+	<select id="selectOne" parameterType="int" resultType="Category">
+		select * from category where id=#{id}
+	</select>
+	<select id="count" resultType="int">
+		select count(*) from category where status=0
+	</select>
+	<select id="select" resultMap="categoryResultMap">
+		select * from category where status=0 order by id desc limit #{0},#{1}
+	</select>
+	<insert id="insert" parameterType="Category">
+		insert into category(name) values(#{name})
+	</insert>
+	<delete id="delete" parameterType="int">
+		update category set status=1 where id=#{id}
+	</delete>
+	<update id="update" parameterType="Category">
+		update category set name=#{name} where id=#{id}
+	</update>
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orilore.mappers.FactoryMapper">
+	<resultMap type="Factory" id="factoryResultMap">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="person" property="person"/>
+		<result column="phone" property="phone"/>
+		<result column="address" property="address"/>
+		<result column="account" property="account"/>
+		<result column="status" property="status"/>
+	</resultMap>
+	<select id="selectOne" parameterType="int" resultType="Factory">
+		select * from factory where id=#{id}
+	</select>
+	<select id="select" resultMap="factoryResultMap">
+		select * from factory where status=0 order by id desc limit #{0},#{1}
+	</select>
+	<select id="count" resultType="int">
+		select count(*) from factory where status=0
+	</select>
+	<insert id="insert" parameterType="Factory">
+		insert into factory(name,person,phone,address,account) values(#{name},#{person},#{phone},#{address},#{account})
+	</insert>
+	<delete id="delete" parameterType="int">
+		update factory set status=1 where id=#{id}
+	</delete>
+	<update id="update" parameterType="Factory">
+		update factory set name=#{name},person=#{person},phone=#{phone},address=#{address},account=#{account} where id=#{id}
+	</update>
+</mapper>

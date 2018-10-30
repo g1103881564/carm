@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orilore.mappers.InstockMapper">
+	<resultMap type="Instock" id="instockResultMap">
+		<id column="id" property="id"/>
+		<result column="cid" property="cid"/>
+		<result column="fid" property="fid"/>
+		<result column="size" property="size"/>
+		<result column="quantity" property="quantity"/>
+		<result column="status" property="status"/>
+		<result column="price" property="price"/>
+		<result column="sale" property="sale"/>
+		<result column="indate" property="indate"/>
+		<result column="status" property="status"/>
+		<result column="fname" property="fname"/>
+		<result column="cname" property="cname"/>
+	</resultMap>
+	<select id="selectOne" parameterType="int" resultType="Instock">
+		select a.*,b.name cname,c.name fname from instock a 
+		left join component b on a.cid=b.id
+		left join factory c on a.fid=c.id
+		where a.id=#{id}
+	</select>
+	<select id="selectByMonth" parameterType="string" resultType="Instock">
+		select b.name cname,a.indate indate,a.size,sum(a.price) price,sum(a.sale) sale,sum(a.quantity) quantity
+		from instock a left join component b on a.cid=b.id
+		where a.status=0 
+		and a.indate between #{0} and last_day(str_to_date(#{0},'%Y-%m-%d'))
+		group by a.indate,b.name,a.size 
+		order by a.indate,b.name,a.size,sum(a.quantity)
+	</select>
+	<select id="selectByYear" parameterType="string" resultType="Instock">
+		select concat(#{0},'年1月') indate,b.name cname,a.size,sum(a.price) price,sum(a.sale) sale,sum(a.quantity) quantity
+		from instock a left join component b on a.cid=b.id
+		where a.status=0 and a.indate between concat(#{0},'-01-01') and last_day(str_to_date(concat(#{0},'-01-01'),'%Y-%m-%d'))
+		group by b.name,a.size,concat(#{0},'年1月')
+		union
+		select concat(#{0},'年2月') indate,b.name cname,a.size,sum(a.price) price,sum(a.sale) sale,sum(a.quantity) quantity
+		from instock a left join component b on a.cid=b.id
+		where a.status=0 and a.indate between concat(#{0},'-02-01') and last_day(str_to_date(concat(#{0},'-02-01'),'%Y-%m-%d'))
+		group by b.name,a.size,concat(#{0},'年2月')
+		union
+		select concat(#{0},'年3月') indate,b.name cname,a.size,sum(a.price) price,sum(a.sale) sale,sum(a.quantity) quantity
+		from instock a left join component b on a.cid=b.id
+		where a.status=0 and a.indate between concat(#{0},'-03-01') and last_day(str_to_date(concat(#{0},'-03-01'),'%Y-%m-%d'))
+		group by b.name,a.size,concat(#{0},'年3月')
+		union
+		select concat(#{0},'年4月') indate,b.name cname,a.size,sum(a.price) price,sum(a.sale) sale,sum(a.quantity) quantity
+		from instock a left join component b on a.cid=b.id
+		where a.status=0 and a.indate between concat(#{0},'-04-01') and last_day(str_to_date(concat(#{0},'-04-01'),'%Y-%m-%d'))
+		group by b.name,a.size,concat(#{0},'年4月')
+		union
+		select concat(#{0},'年5月') indate,b.name cname,a.size,sum(a.price) price,sum(a.sale) sale,sum(a.quantity) quantity
+		from instock a left join component b on a.cid=b.id
+		where a.status=0 and a.indate between concat(#{0},'-05-01') and last_day(str_to_date(concat(#{0},'-05-01'),'%Y-%m-%d'))
+		group by b.name,a.size,concat(#{0},'年5月')
+		union
+		select concat(#{0},'年6月') indate,b.name cname,a.size,sum(a.price) price,sum(a.sale) sale,sum(a.quantity) quantity
+		from instock a left join component b on a.cid=b.id
+		where a.status=0 and a.indate between concat(#{0},'-06-01') and last_day(str_to_date(concat(#{0},'-06-01'),'%Y-%m-%d'))
+		group by b.name,a.size,concat(#{0},'年6月')
+		union
+		select concat(#{0},'年7月') indate,b.name cname,a.size,sum(a.price) price,sum(a.sale) sale,sum(a.quantity) quantity
+		from instock a left join component b on a.cid=b.id
+		where a.status=0 and a.indate between concat(#{0},'-07-01') and last_day(str_to_date(concat(#{0},'-07-01'),'%Y-%m-%d'))
+		group by b.name,a.size,concat(#{0},'年7月')
+		union
+		select concat(#{0},'年8月') indate,b.name cname,a.size,sum(a.price) price,sum(a.sale) sale,sum(a.quantity) quantity
+		from instock a left join component b on a.cid=b.id
+		where a.status=0 and a.indate between concat(#{0},'-08-01') and last_day(str_to_date(concat(#{0},'-08-01'),'%Y-%m-%d'))
+		group by b.name,a.size,concat(#{0},'年8月')
+		union
+		select concat(#{0},'年9月') indate,b.name cname,a.size,sum(a.price) price,sum(a.sale) sale,sum(a.quantity) quantity
+		from instock a left join component b on a.cid=b.id
+		where a.status=0 and a.indate between concat(#{0},'-09-01') and last_day(str_to_date(concat(#{0},'-09-01'),'%Y-%m-%d'))
+		group by b.name,a.size,concat(#{0},'年9月')
+		union
+		select concat(#{0},'年10月') indate,b.name cname,a.size,sum(a.price) price,sum(a.sale) sale,sum(a.quantity) quantity
+		from instock a left join component b on a.cid=b.id
+		where a.status=0 and a.indate between concat(#{0},'-10-01') and last_day(str_to_date(concat(#{0},'-10-01'),'%Y-%m-%d'))
+		group by b.name,a.size,concat(#{0},'年10月')
+		union
+		select concat(#{0},'年11月') indate,b.name cname,a.size,sum(a.price) price,sum(a.sale) sale,sum(a.quantity) quantity
+		from instock a left join component b on a.cid=b.id
+		where a.status=0 and a.indate between concat(#{0},'-11-01') and last_day(str_to_date(concat(#{0},'-11-01'),'%Y-%m-%d'))
+		group by b.name,a.size,concat(#{0},'年11月')
+		union
+		select concat(#{0},'年12月') indate,b.name cname,a.size,sum(a.price) price,sum(a.sale) sale,sum(a.quantity) quantity
+		from instock a left join component b on a.cid=b.id
+		where a.status=0 and a.indate between concat(#{0},'-12-01') and last_day(str_to_date(concat(#{0},'-12-01'),'%Y-%m-%d'))
+		group by b.name,a.size,concat(#{0},'年12月')
+		order by cname asc,size asc,quantity asc
+	</select>
+	<select id="count" resultType="int" parameterType="map">
+		select count(*) from instock a left join component b on a.cid=b.id left join factory c on a.fid=c.id
+		where a.status=0
+		<if test="cname!=null and cname!=''"> and b.name like concat('%',#{cname},'%') </if>
+		<if test="fid!=null and fid &gt; 0"> and a.fid=#{fid} </if>
+		<if test="begin!=null and end==null"> and a.indate=#{begin} </if>
+		<if test="begin==null and end!=null"> and a.indate=#{begin} </if>
+		<if test="begin!=null and end!=null"> and a.indate between #{begin} and #{end}</if>
+	</select>
+	<select id="select" resultMap="instockResultMap" parameterType="map">
+		select a.*,b.name cname,c.name fname from instock a 
+		left join component b on a.cid=b.id
+		left join factory c on a.fid=c.id
+		where a.status=0
+		<if test="cname!=null and cname!=''"> and b.name like concat('%',#{cname},'%') </if>
+		<if test="fid!=null and fid &gt; 0"> and a.fid=#{fid} </if>
+		<if test="begin!=null and end==null"> and a.indate=#{begin} </if>
+		<if test="begin==null and end!=null"> and a.indate=#{begin} </if>
+		<if test="begin!=null and end!=null"> and a.indate between #{begin} and #{end}</if>
+		order by a.id desc
+		limit #{page},#{count}
+	</select>
+	<insert id="insert" parameterType="Instock">
+		insert into instock(cid,quantity,price,sale,size,indate,fid) values(#{cid},#{quantity},#{price},#{sale},#{size},#{indate},#{fid})
+	</insert>
+	<delete id="delete" parameterType="int">
+		update instock set status=1 where id=#{id}
+	</delete>
+	<update id="update" parameterType="Instock">
+		update instock set cid=#{cid},quantity=#{quantity},price=#{price},sale=#{sale},size=#{size},indate=#{indate},fid=#{fid} where id=#{id}
+	</update>
+</mapper>
